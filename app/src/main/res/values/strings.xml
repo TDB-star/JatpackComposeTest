@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JatpackComposeTest</string>
+    <string name="post_text">Scaffold padding values define padding that will be applied along the inside edges of a box.</string>
 </resources>

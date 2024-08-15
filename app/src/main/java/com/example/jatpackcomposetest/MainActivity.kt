@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,48 +24,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jatpackcomposetest.ui.theme.JatpackComposeTestTheme
+import com.example.jatpackcomposetest.ui.theme.PostCard
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         setContent {
-            Scaffold(Modifier.fillMaxSize()) { innerPadding ->
-                TimesTable(innerPadding)
-            }
-        }
-    }
-}
-
-@Composable
-fun TimesTable(paddingValues: PaddingValues) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-    ) {
-        for (i in 1 until 10) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)) {
-                for (j in 1 until 10) {
-                    val color = if ((i + j) % 2 == 0) {
-                        Color.White
-                    } else {
-                        Color.Green
-                    }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .weight(1f)
-                            .border(width = 1.dp, color = Color.DarkGray)
-                            .background(color),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = " ${ i * j }")
-                    }
+            JatpackComposeTestTheme {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(8.dp)
+                ) {
+                    PostCard()
                 }
             }
         }
     }
 }
+
 
