@@ -24,22 +24,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jatpackcomposetest.ui.theme.JatpackComposeTestTheme
+import com.example.jatpackcomposetest.ui.theme.MainScreen
 import com.example.jatpackcomposetest.ui.theme.PostCard
+import com.example.jatpackcomposetest.ui.theme.ScaffoldTest
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //enableEdgeToEdge()
+        enableEdgeToEdge()
         setContent {
             JatpackComposeTestTheme {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(8.dp)
-                ) {
-                    PostCard()
-                }
+ //               Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(MaterialTheme.colorScheme.background)
+//                        .padding(8.dp)
+//                ) {
+//                    PostCard()
+//
+//                }
+                MainScreen()
             }
         }
     }
