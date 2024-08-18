@@ -16,11 +16,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,10 +39,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import com.example.jatpackcomposetest.MainViewModel
 import com.example.jatpackcomposetest.R
 
 @Composable
-fun InstagramProfileCard() {
+fun InstagramProfileCard(
+    viewModel: MainViewModel
+) {
+
+    val isFollowed = viewModel.isFollowing.observeAsState(false)
+
     Card(modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(topStart = 4.dp,
         topEnd = 4.dp,
@@ -47,13 +61,19 @@ fun InstagramProfileCard() {
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
     ) {
-        InstagramProfileTitles()
+        InstagramProfileTitles(isFollowed = isFollowed) {
+            viewModel.changeFollowingStatus()
+        }
     }
 }
 
+
 @Composable
-fun InstagramProfileTitles() {
-    Column(modifier = Modifier.padding(16.dp)) {
+private fun InstagramProfileTitles(
+    isFollowed: State<Boolean>,
+    clickListener: () -> Unit
+) {
+    Column(modifier = Modifier.padding(8.dp)) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,8 +100,21 @@ fun InstagramProfileTitles() {
             fontSize = 12.sp,
             textDecoration = TextDecoration.Underline
         )
-        Button(onClick = { Log.d("TAG", "Button pressed")}, modifier = Modifier.padding(top = 8.dp)) {
-            Text(text = "Follow")
+        Button(onClick = { clickListener()},
+            modifier = Modifier.padding(top = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isFollowed.value) {
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                } else {
+                    MaterialTheme.colorScheme.primary
+                }
+            )) {
+            val text = if (isFollowed.value) {
+                "Unfollow"
+            } else {
+                "Follow"
+            }
+            Text(text = text)
         }
     }
 }
@@ -100,18 +133,18 @@ private fun UserStatistics(
     }
 }
 
-@Preview
-@Composable
-fun PreviewCardLight() {
-    JatpackComposeTestTheme(darkTheme = false) {
-        InstagramProfileCard()
-    }
-}
-
-@Preview
-@Composable
-fun PreviewCardDark() {
-    JatpackComposeTestTheme(darkTheme = true) {
-        InstagramProfileCard()
-    }
-}
+//@Preview
+//@Composable
+//fun PreviewCardLight() {
+//    JatpackComposeTestTheme(darkTheme = false) {
+//        InstagramProfileCard()
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun PreviewCardDark() {
+//    JatpackComposeTestTheme(darkTheme = true) {
+//        InstagramProfileCard()
+//    }
+//}
