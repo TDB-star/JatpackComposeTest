@@ -2,6 +2,7 @@ package com.example.jatpackcomposetest.ui.theme
 
 import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,112 +35,143 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jatpackcomposetest.R
+import com.example.jatpackcomposetest.domain.FeedPost
+import com.example.jatpackcomposetest.domain.InteractionsItem
+import com.example.jatpackcomposetest.domain.InteractionsType
 
 @Composable
-fun PostCard() {
-    Column(modifier = Modifier.padding(8.dp)) {
-        PostCardHeader()
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.post_text),
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            painter = painterResource(id = R.drawable.post),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        PostCardInteractions()
+fun PostCard(
+    modifier: Modifier = Modifier,
+    feedPost: FeedPost,
+    onInteractionsItemClickListener: (InteractionsItem) -> Unit
+) {
+    Card(
+        modifier = modifier
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            PostCardHeader(feedPost)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = feedPost.postText,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Image(
+                modifier = Modifier.fillMaxWidth(),
+                painter = painterResource(id = feedPost.contentImage),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            PostCardInteractions(interactionItems = feedPost.interactions,
+                onItemClickListener = onInteractionsItemClickListener)
+        }
     }
 }
 
 @Composable
-private fun PostCardInteractions() {
+private fun PostCardInteractions(
+    interactionItems: List<InteractionsItem>,
+    onItemClickListener: (InteractionsItem) -> Unit
+) {
     Row {
         Row(modifier = Modifier.weight(1f)) {
-           IconWithText(
-               icon = Icons.Rounded.Face,
-               text = "916")
+            val viewsItem = interactionItems.getItemByType(InteractionsType.VIEWS)
+            IconWithText(
+                icon = Icons.Rounded.Face,
+                text = viewsItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(viewsItem)
+                }
+            )
         }
-        Row(modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val sharesItem = interactionItems.getItemByType(InteractionsType.SHARES)
+            val commentsItem = interactionItems.getItemByType(InteractionsType.COMMENTS)
+            val likesItem = interactionItems.getItemByType(InteractionsType.LIKES)
             IconWithText(
                 icon = Icons.Rounded.Share,
-                text = "7")
+                text = sharesItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(sharesItem)
+                }
+            )
 
             IconWithText(
                 icon = Icons.Rounded.AccountBox,
-                text = "8")
+                text = commentsItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(commentsItem)
+                }
+            )
 
             IconWithText(
                 icon = Icons.Rounded.FavoriteBorder,
-                text = "23")
+                text = likesItem.count.toString(),
+                onItemClickListener = {
+                    onItemClickListener(likesItem)
+                }
+            )
         }
     }
+}
+
+private fun List<InteractionsItem>.getItemByType(type: InteractionsType): InteractionsItem {
+    return this.find { it.type == type } ?: throw IllegalStateException("Item type not found")
 }
 
 @Composable
 private fun IconWithText(
     icon: ImageVector,
     text: String,
+    onItemClickListener: () -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(modifier = Modifier.clickable {
+       onItemClickListener()
+    }, verticalAlignment = Alignment.CenterVertically) {
         Icon(
-            imageVector = icon ,
+            imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSecondary
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = text,
-            color = MaterialTheme.colorScheme.onSecondary)
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onSecondary
+        )
     }
 }
 
 @Composable
-private fun PostCardHeader() {
-    Card {
-        Row(modifier = Modifier
+private fun PostCardHeader(
+    feedPost: FeedPost
+) {
+    Row(
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape),
-                painter = painterResource(id = R.drawable.giorgio_encinas),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = "/dev/null", color = MaterialTheme.colorScheme.onPrimary)
-                Text(text = "14:00", color = MaterialTheme.colorScheme.onSecondary)
-            }
-            Icon(
-                imageVector = Icons.Rounded.MoreVert,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary
-            )
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape),
+            painter = painterResource(id = feedPost.avatarResId),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = feedPost.name, color = MaterialTheme.colorScheme.onPrimary)
+            Text(text = feedPost.time, color = MaterialTheme.colorScheme.onSecondary)
         }
-    }
-}
-
-@Preview
-@Composable
-private fun PostCardLight() {
-    JatpackComposeTestTheme(darkTheme = false, dynamicColor = false) {
-        PostCard()
-    }
-}
-
-@Preview
-@Composable
-private fun PostCardDark() {
-    JatpackComposeTestTheme(darkTheme = true, dynamicColor = false) {
-        PostCard()
+        Icon(
+            imageVector = Icons.Rounded.MoreVert,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSecondary
+        )
     }
 }

@@ -1,5 +1,7 @@
 package com.example.jatpackcomposetest.ui.theme
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -22,11 +24,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.jatpackcomposetest.R
+import com.example.jatpackcomposetest.domain.FeedPost
 
 @Preview
 @Composable
 fun MainScreen() {
+
+    val feedPost = remember {
+        mutableStateOf(FeedPost())
+    }
+
     Scaffold(bottomBar = {
         NavigationBar(
             containerColor = MaterialTheme.colorScheme.primary
@@ -57,10 +66,23 @@ fun MainScreen() {
                 })
             }
         }
-    }) {
-        Text(
-            modifier = Modifier.padding(it),
-            text = "This is scaffold content"
+    }) { paddingValues ->
+        PostCard(
+            modifier = Modifier.padding(paddingValues),
+            feedPost = feedPost.value,
+            onInteractionsItemClickListener = { newItem ->
+                val oldInteractions = feedPost.value.interactions
+                val newInteractions = oldInteractions.toMutableList().apply {
+                    replaceAll { oldItem ->
+                        if (oldItem.type == newItem.type) {
+                            oldItem.copy(count = oldItem.count + 1)
+                        } else {
+                            oldItem
+                        }
+                    }
+                }
+                feedPost.value = feedPost.value.copy(interactions = newInteractions)
+            }
         )
     }
 }
