@@ -19,23 +19,21 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.jatpackcomposetest.MainViewModel
 import com.example.jatpackcomposetest.R
 import com.example.jatpackcomposetest.domain.FeedPost
 
-@Preview
 @Composable
-fun MainScreen() {
-
-    val feedPost = remember {
-        mutableStateOf(FeedPost())
-    }
-
+fun MainScreen(
+    viewModel: MainViewModel
+) {
     Scaffold(bottomBar = {
         NavigationBar(
             containerColor = MaterialTheme.colorScheme.primary
@@ -67,21 +65,22 @@ fun MainScreen() {
             }
         }
     }) { paddingValues ->
+        val feedPost = viewModel.feedPost.observeAsState(FeedPost())
+
         PostCard(
             modifier = Modifier.padding(paddingValues),
             feedPost = feedPost.value,
-            onInteractionsItemClickListener = { newItem ->
-                val oldInteractions = feedPost.value.interactions
-                val newInteractions = oldInteractions.toMutableList().apply {
-                    replaceAll { oldItem ->
-                        if (oldItem.type == newItem.type) {
-                            oldItem.copy(count = oldItem.count + 1)
-                        } else {
-                            oldItem
-                        }
-                    }
-                }
-                feedPost.value = feedPost.value.copy(interactions = newInteractions)
+            onViewsClickListener = {
+                viewModel.updateCount(it)
+            },
+            onShareClickListener = {
+                viewModel.updateCount(it)
+            },
+            onCommentClickListener = {
+                viewModel.updateCount(it)
+            },
+            onLikeClickListener = {
+                viewModel.updateCount(it)
             }
         )
     }

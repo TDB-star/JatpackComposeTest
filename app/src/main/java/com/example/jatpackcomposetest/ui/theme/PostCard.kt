@@ -43,7 +43,10 @@ import com.example.jatpackcomposetest.domain.InteractionsType
 fun PostCard(
     modifier: Modifier = Modifier,
     feedPost: FeedPost,
-    onInteractionsItemClickListener: (InteractionsItem) -> Unit
+    onViewsClickListener: (InteractionsItem) -> Unit,
+    onShareClickListener: (InteractionsItem) -> Unit,
+    onCommentClickListener: (InteractionsItem) -> Unit,
+    onLikeClickListener: (InteractionsItem) -> Unit
 ) {
     Card(
         modifier = modifier
@@ -64,7 +67,10 @@ fun PostCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             PostCardInteractions(interactionItems = feedPost.interactions,
-                onItemClickListener = onInteractionsItemClickListener)
+                onViewsClickListener = onViewsClickListener,
+                onShareClickListener = onShareClickListener,
+                onCommentClickListener = onCommentClickListener,
+                onLikeClickListener = onLikeClickListener)
         }
     }
 }
@@ -72,7 +78,10 @@ fun PostCard(
 @Composable
 private fun PostCardInteractions(
     interactionItems: List<InteractionsItem>,
-    onItemClickListener: (InteractionsItem) -> Unit
+    onViewsClickListener: (InteractionsItem) -> Unit,
+    onShareClickListener: (InteractionsItem) -> Unit,
+    onCommentClickListener: (InteractionsItem) -> Unit,
+    onLikeClickListener: (InteractionsItem) -> Unit
 ) {
     Row {
         Row(modifier = Modifier.weight(1f)) {
@@ -81,7 +90,7 @@ private fun PostCardInteractions(
                 icon = Icons.Rounded.Face,
                 text = viewsItem.count.toString(),
                 onItemClickListener = {
-                    onItemClickListener(viewsItem)
+                    onViewsClickListener(viewsItem)
                 }
             )
         }
@@ -96,7 +105,7 @@ private fun PostCardInteractions(
                 icon = Icons.Rounded.Share,
                 text = sharesItem.count.toString(),
                 onItemClickListener = {
-                    onItemClickListener(sharesItem)
+                    onShareClickListener(sharesItem)
                 }
             )
 
@@ -104,7 +113,7 @@ private fun PostCardInteractions(
                 icon = Icons.Rounded.AccountBox,
                 text = commentsItem.count.toString(),
                 onItemClickListener = {
-                    onItemClickListener(commentsItem)
+                    onCommentClickListener(commentsItem)
                 }
             )
 
@@ -112,7 +121,7 @@ private fun PostCardInteractions(
                 icon = Icons.Rounded.FavoriteBorder,
                 text = likesItem.count.toString(),
                 onItemClickListener = {
-                    onItemClickListener(likesItem)
+                    onLikeClickListener(likesItem)
                 }
             )
         }
