@@ -32,23 +32,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import com.example.jatpackcomposetest.MainViewModel
+import com.example.jatpackcomposetest.InstagramModel
 import com.example.jatpackcomposetest.R
 
 @Composable
 fun InstagramProfileCard(
-    viewModel: MainViewModel
+    model: InstagramModel,
+    onFollowedButtonClickListener: (InstagramModel) -> Unit
 ) {
-
-    val isFollowed = viewModel.isFollowing.observeAsState(false)
 
     Card(modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(topStart = 4.dp,
@@ -61,8 +57,8 @@ fun InstagramProfileCard(
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground)
     ) {
-        InstagramProfileTitles(isFollowed = isFollowed) {
-            viewModel.changeFollowingStatus()
+        InstagramProfileTitles(model = model) {
+            onFollowedButtonClickListener(model)
         }
     }
 }
@@ -70,8 +66,9 @@ fun InstagramProfileCard(
 
 @Composable
 private fun InstagramProfileTitles(
-    isFollowed: State<Boolean>,
-    clickListener: () -> Unit
+    model: InstagramModel,
+    clickListener: () -> Unit,
+
 ) {
     Column(modifier = Modifier.padding(8.dp)) {
         Row(
@@ -94,8 +91,8 @@ private fun InstagramProfileTitles(
             UserStatistics("Followers", "4M")
             UserStatistics("Following", "150")
         }
-        Text(text = "Instagram", fontSize = 32.sp)
-        Text(text = "#YoursToMake", fontSize = 14.sp)
+        Text(text = "Instagram ${model.id}", fontSize = 32.sp)
+        Text(text = "#${model.title}", fontSize = 14.sp)
         Text(text = "www.facebook.com/emotional_health",
             fontSize = 12.sp,
             textDecoration = TextDecoration.Underline
@@ -103,13 +100,13 @@ private fun InstagramProfileTitles(
         Button(onClick = { clickListener()},
             modifier = Modifier.padding(top = 16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (isFollowed.value) {
+                containerColor = if (model.isFollowed) {
                     MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                 } else {
                     MaterialTheme.colorScheme.primary
                 }
             )) {
-            val text = if (isFollowed.value) {
+            val text = if (model.isFollowed) {
                 "Unfollow"
             } else {
                 "Follow"
@@ -132,19 +129,3 @@ private fun UserStatistics(
         Text(text = title, textAlign = TextAlign.Center)
     }
 }
-
-//@Preview
-//@Composable
-//fun PreviewCardLight() {
-//    JatpackComposeTestTheme(darkTheme = false) {
-//        InstagramProfileCard()
-//    }
-//}
-//
-//@Preview
-//@Composable
-//fun PreviewCardDark() {
-//    JatpackComposeTestTheme(darkTheme = true) {
-//        InstagramProfileCard()
-//    }
-//}
