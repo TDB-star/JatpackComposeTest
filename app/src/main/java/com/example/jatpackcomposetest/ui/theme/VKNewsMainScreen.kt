@@ -49,7 +49,7 @@ fun MainScreen(
 
     val navigationState = rememberNavState()
 
-    Scaffold(bottomBar = {
+    Scaffold( bottomBar = {
         NavigationBar(
             containerColor = MaterialTheme.colorScheme.primary
         ) {
@@ -82,6 +82,7 @@ fun MainScreen(
     }) { paddingValues ->
         AppNavGraph(
             navController = navigationState.navHostController,
+
             homeScreenContent = {
                 HomeScreen(
                     viewModel = viewModel,

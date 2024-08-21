@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
+import com.example.jatpackcomposetest.navigation.CommentsScreen
 import com.example.jatpackcomposetest.ui.theme.JatpackComposeTestTheme
 import com.example.jatpackcomposetest.ui.theme.MainScreen
 import com.example.jatpackcomposetest.ui.theme.PostCard
