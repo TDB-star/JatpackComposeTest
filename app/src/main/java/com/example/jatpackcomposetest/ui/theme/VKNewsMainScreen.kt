@@ -1,8 +1,12 @@
 package com.example.jatpackcomposetest.ui.theme
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -19,38 +23,49 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.jatpackcomposetest.MainViewModel
 import com.example.jatpackcomposetest.R
 import com.example.jatpackcomposetest.domain.FeedPost
+import com.example.jatpackcomposetest.navigation.AppNavGraph
+import com.example.jatpackcomposetest.navigation.NavigationState
+import com.example.jatpackcomposetest.navigation.Screen
+import com.example.jatpackcomposetest.navigation.rememberNavState
 
 @Composable
 fun MainScreen(
     viewModel: MainViewModel
 ) {
+
+    val navigationState = rememberNavState()
+
     Scaffold(bottomBar = {
         NavigationBar(
             containerColor = MaterialTheme.colorScheme.primary
         ) {
 
-            val selectedItem = remember {
-                mutableStateOf(0)
-            }
+            val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
             val items = listOf(
                 NavigationItem.Home,
                 NavigationItem.Favorite,
                 NavigationItem.Profile
             )
-            items.forEachIndexed { index, item ->
+            items.forEach { item ->
                 NavigationBarItem(
-                    selected = selectedItem.value == index,
-                    onClick = {selectedItem.value = index },
+                    selected = currentRoute == item.screen.rout,
+                    onClick = { navigationState.navigateTo(item.screen.rout) },
                     icon = { Icon(imageVector = item.icon, contentDescription = null) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.onPrimary,
@@ -60,27 +75,37 @@ fun MainScreen(
                         indicatorColor = MaterialTheme.colorScheme.primary
                     ),
                     label = {
-                    Text(text = stringResource(id = item.titleResId))
-                })
+                        Text(text = stringResource(id = item.titleResId))
+                    })
             }
         }
     }) { paddingValues ->
-        val feedPost = viewModel.feedPost.observeAsState(FeedPost())
+        AppNavGraph(
+            navController = navigationState.navHostController,
+            homeScreenContent = {
+                HomeScreen(
+                    viewModel = viewModel,
+                    paddingValues = paddingValues
+                )
+            },
+            favoriteScreenContent = {
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .padding(20.dp)
+                ) {
+                    Text(text = "Favorites")
+                }
 
-        PostCard(
-            modifier = Modifier.padding(paddingValues),
-            feedPost = feedPost.value,
-            onViewsClickListener = {
-                viewModel.updateCount(it)
             },
-            onShareClickListener = {
-                viewModel.updateCount(it)
-            },
-            onCommentClickListener = {
-                viewModel.updateCount(it)
-            },
-            onLikeClickListener = {
-                viewModel.updateCount(it)
+            profileScreenContent = {
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .padding(20.dp)
+                ) {
+                    Text(text = "Profile")
+                }
             }
         )
     }

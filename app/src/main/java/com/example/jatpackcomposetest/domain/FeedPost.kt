@@ -3,6 +3,7 @@ package com.example.jatpackcomposetest.domain
 import com.example.jatpackcomposetest.R
 
 data class FeedPost(
+    val id: Int = 0,
     val name: String = "dev/null",
     val time: String = "14:00",
     val avatarResId: Int = R.drawable.giorgio_encinas,
