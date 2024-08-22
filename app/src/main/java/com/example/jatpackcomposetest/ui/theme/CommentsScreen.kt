@@ -1,6 +1,5 @@
-package com.example.jatpackcomposetest.navigation
+package com.example.jatpackcomposetest.ui.theme
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,8 +33,6 @@ import com.example.jatpackcomposetest.CommentsViewModel
 import com.example.jatpackcomposetest.CommentsViewModelFactory
 import com.example.jatpackcomposetest.domain.FeedPost
 import com.example.jatpackcomposetest.domain.PostComment
-import com.example.jatpackcomposetest.ui.theme.CommentsScreenState
-import com.example.jatpackcomposetest.ui.theme.JatpackComposeTestTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
