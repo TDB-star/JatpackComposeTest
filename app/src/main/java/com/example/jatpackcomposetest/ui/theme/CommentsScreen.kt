@@ -1,5 +1,6 @@
 package com.example.jatpackcomposetest.ui.theme
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,6 +47,7 @@ fun CommentsScreen(
 
     val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
     val currentState = screenState.value
+
 
     if (currentState is CommentsScreenState.Comments) {
         Scaffold(
